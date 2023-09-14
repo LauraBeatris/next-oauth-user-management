@@ -1,10 +1,11 @@
-import { UserButton, UserProfile } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 import { auth, clerkClient } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
 import { google } from "googleapis";
+import { Flex } from "@radix-ui/themes";
+import { Calendar } from "@/components/Calendar";
 
 export default function Home() {
-  async function fetchContent() {
+  async function fetchEventsAction() {
     "use server";
 
     const { userId } = auth();
@@ -15,10 +16,6 @@ export default function Home() {
     );
 
     const { token } = OauthAccessToken;
-
-    if (!token) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
 
     const calendarApi = google.calendar({
       version: "v3",
@@ -35,22 +32,21 @@ export default function Home() {
     const calendarId = items?.[0].id;
 
     if (calendarId) {
-      // TODO - Render events
-      const events = await calendarApi.events.list({
+      const { data: events } = await calendarApi.events.list({
         calendarId,
       });
+
+      return events;
     }
   }
 
   return (
-    <main>
-      <form action={fetchContent}>
-        <button type="submit">Fetch content</button>
-      </form>
+    <Flex height="100%" width="100%">
+      <UserButton />
 
-      <UserButton afterSignOutUrl="/" />
-
-      <UserProfile />
-    </main>
+      <Flex justify="center" gap="2" align="center">
+        <Calendar action={fetchEventsAction} />U
+      </Flex>
+    </Flex>
   );
 }
