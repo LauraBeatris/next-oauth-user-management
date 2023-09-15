@@ -14,9 +14,9 @@ export default function RootLayout({
           <Theme>
             <Flex
               style={{
-                height: "100vh",
+                minHeight: "100vh",
                 width: "100vw",
-                backgroundColor: "var(--accent-12)",
+                backgroundColor: "var(--accent-4)",
               }}
               justify="center"
               align="center"

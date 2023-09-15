@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/nextjs";
 import { auth, clerkClient } from "@clerk/nextjs";
 import { google } from "googleapis";
-import { Flex } from "@radix-ui/themes";
+import { Container, Flex } from "@radix-ui/themes";
 import { Calendar } from "@/components/Calendar";
 
 export default function Home() {
@@ -41,12 +41,23 @@ export default function Home() {
   }
 
   return (
-    <Flex height="100%" width="100%">
-      <UserButton />
+    <Container
+      style={{ justifyContent: "center" }}
+      size="2"
+      height="100%"
+      width="100%"
+    >
+      <Flex
+        grow={"1"}
+        direction={"column"}
+        justify={"center"}
+        align="center"
+        gap={"4"}
+      >
+        <UserButton showName />
 
-      <Flex justify="center" gap="2" align="center">
-        <Calendar action={fetchEventsAction} />U
+        <Calendar action={fetchEventsAction} />
       </Flex>
-    </Flex>
+    </Container>
   );
 }

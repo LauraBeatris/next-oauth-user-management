@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Flex, Grid, Text } from "@radix-ui/themes";
 import { calendar_v3 } from "googleapis";
 import { useState } from "react";
 
@@ -10,23 +10,42 @@ interface CalendarProps {
 
 export const Calendar = ({ action }: CalendarProps) => {
   const [data, setData] = useState<calendar_v3.Schema$Events>();
+  const [isLoading, setLoading] = useState(false);
 
   return (
     <Flex justify="center" align="center" direction="column" gap="4">
       <Flex justify="center" align="center">
         <form
           action={async () => {
-            setData(await action());
+            setLoading(true);
+
+            setData(await action().finally(() => setLoading(false)));
           }}
         >
-          <Button size="4">Fetch content</Button>
+          <Button variant="surface" size="3" highContrast>
+            {isLoading ? "Loading events..." : "Get calendar events"}
+          </Button>
         </form>
       </Flex>
 
       {data && (
-        <Text size="4" highContrast color="gray">
-          {data.description}
-        </Text>
+        <Flex
+          direction="column"
+          gap="2"
+          style={{ maxHeight: "400px", overflow: "scroll" }}
+        >
+          <Text weight="bold" align="center" size="4" highContrast color="gray">
+            Calendar name: {data.description}
+          </Text>
+
+          <Grid columns="3" gap="3" width="auto">
+            {data.items?.map((item) => (
+              <Box height="9">
+                <Text>{item.summary}</Text>
+              </Box>
+            ))}
+          </Grid>
+        </Flex>
       )}
     </Flex>
   );
